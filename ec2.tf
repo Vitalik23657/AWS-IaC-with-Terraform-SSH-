@@ -34,27 +34,19 @@ data "aws_ami" "amazon_linux" {
 
   filter {
     name   = "name"
-    values = ["al2023-ami-*"]
+    values = ["al2023-ami-*-x86_64"]
   }
 }
 
-resource "aws_instance" "cmtr-m0n4rtob-ec2" {
-  ami           = data.aws_ami.amazon_linux.id
-  instance_type = "t2.micro"
-
-  subnet_id = data.aws_subnet.public.id
-
-  vpc_security_group_ids = [
-    data.aws_security_group.sg.id
-  ]
-
-  key_name = aws_key_pair.cmtr-m0n4rtob-keypair.key_name
-
+resource "aws_instance" "cmtr_m0n4rtob_ec2" {
+  ami                         = data.aws_ami.amazon_linux.id
+  instance_type               = "t2.micro"
+  subnet_id                   = data.aws_subnet.public.id
+  vpc_security_group_ids      = [data.aws_security_group.sg.id]
+  key_name                    = aws_key_pair.cmtr_m0n4rtob_keypair.key_name
   associate_public_ip_address = true
 
-  tags = {
-    Name    = var.instance_name
-    Project = "epam-tf-lab"
-    ID      = "cmtr-m0n4rtob"
-  }
+  tags = merge(local.common_tags, {
+    Name = local.instance_name
+  })
 }
