@@ -7,7 +7,7 @@ data "aws_vpc" "existing" {
 
 data "aws_security_group" "sg" {
   filter {
-    name   = "group-name"
+    name   = "tag:Name"
     values = ["cmtr-m0n4rtob-sg"]
   }
 }
@@ -30,12 +30,11 @@ data "aws_subnet" "public" {
 
 data "aws_ami" "amazon_linux" {
   most_recent = true
-
-  owners = ["amazon"]
+  owners      = ["amazon"]
 
   filter {
     name   = "name"
-    values = ["al2023-ami-*-x86_64"]
+    values = ["al2023-ami-*"]
   }
 }
 
@@ -54,7 +53,7 @@ resource "aws_instance" "cmtr-m0n4rtob-ec2" {
   associate_public_ip_address = true
 
   tags = {
-    Name    = "cmtr-m0n4rtob-ec2"
+    Name    = var.instance_name
     Project = "epam-tf-lab"
     ID      = "cmtr-m0n4rtob"
   }
